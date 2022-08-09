@@ -4,6 +4,9 @@
 
 import { GLTFLoader} from './node_modules/three/examples/jsm/loaders/GLTFLoader.js'
 
+import { OrbitControls} from './node_modules/three/examples/jsm/controls/OrbitControls.js'
+
+
 const canvas = document.querySelector('.webgl')
 const scene = new THREE.Scene()
 
@@ -11,7 +14,7 @@ const scene = new THREE.Scene()
 
 const loader = new GLTFLoader()
 
-loader.load('assets/airplane.glb', function (glb){
+loader.load('assets/sfm.glb', function (glb){
     console.log (glb)
     const root = glb.scene; 
     scene.add(root)
@@ -25,10 +28,9 @@ function (xhr){
 
 
 
-const light = new THREE.DirectionalLight(0xffffff, 1)
-light.position.set(2,2,5)
-scene.add(light)
-
+const renderer = new THREE.WebGL1Renderer({
+    canvas: canvas
+})
 
 const sizes = {
     width : window.innerWidth,
@@ -36,14 +38,23 @@ const sizes = {
 
 }
 
+
 const camera = new THREE.PerspectiveCamera(75, sizes.width/ sizes.height, 0.1, 100)
-camera.position.set(0,1,2)
+camera.position.set(1,1,25)
 scene.add(camera)
 
 
-const renderer = new THREE.WebGL1Renderer({
-    canvas: canvas
-})
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+camera.position.set( 1, 1, 25 )
+controls.update()
+
+controls.addEventListener('change',renderer); // addEvent listener to track the mouse control the model (rotation )
+
+
+const light = new THREE.DirectionalLight(0xffffff, 1)
+light.position.set(2,2,5)
+scene.add(light)
+
 
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2))
@@ -57,6 +68,7 @@ function animate(){
     renderer.render(scene, camera)
 }
 animate()
+
 
 
 
